@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>IDENTT Market Intelligence Report — May 2026</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+  :root {
+    --bg:#FFFFFF; --bg2:#F5F4F0; --bg3:#EEEDE8;
+    --border:#E0DED8; --border2:#D0CEC8;
+    --text:#1A1915; --text2:#5F5E5A; --text3:#9B9A96;
+    --blue-bg:#E6F1FB; --blue:#0C447C; --blue-border:#378ADD;
+    --green-bg:#EAF3DE; --green:#27500A; --green-border:#639922;
+    --amber-bg:#FAEEDA; --amber:#633806; --amber-border:#BA7517;
+    --purple-bg:#EEEDFE; --purple:#3C3489; --purple-border:#7F77DD;
+    --red-bg:#FCEBEB; --red:#791F1F; --red-border:#E24B4A;
+    --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:var(--font); background:var(--bg2); color:var(--text); font-size:14px; line-height:1.5; }
+
+  /* ── NAV ── */
+  nav { position:sticky; top:0; z-index:100; background:var(--bg); border-bottom:1px solid var(--border); padding:0 24px; display:flex; gap:4px; overflow-x:auto; scrollbar-width:none; }
+  nav::-webkit-scrollbar { display:none; }
+  nav button { flex-shrink:0; background:none; border:none; border-bottom:2px solid transparent; padding:12px 14px; font-size:12px; font-family:var(--font); color:var(--text2); cursor:pointer; white-space:nowrap; transition:all .15s; }
+  nav button.active { border-bottom-color:var(--text); color:var(--text); font-weight:500; }
+  nav button:hover:not(.active) { color:var(--text); }
+
+  /* ── HEADER ── */
+  .header { background:var(--bg); border-bottom:1px solid var(--border); padding:20px 24px 16px; }
+  .header-top { display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:10px; }
+  .header-eyebrow { font-size:10px; font-weight:500; color:var(--text3); text-transform:uppercase; letter-spacing:.08em; margin-bottom:4px; }
+  .header h1 { font-size:22px; font-weight:500; margin-bottom:3px; }
+  .header-sub { font-size:12px; color:var(--text2); }
+  .badge { display:inline-block; font-size:10px; font-weight:500; padding:3px 10px; border-radius:20px; }
+
+  /* ── TIER LEGEND ── */
+  .tier-legend { background:var(--bg3); border-radius:8px; padding:8px 12px; display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-bottom:16px; }
+  .tier-legend span { font-size:11px; color:var(--text2); }
+
+  /* ── LAYOUT ── */
+  .main { max-width:860px; margin:0 auto; padding:20px 16px; }
+  .tab-content { display:none; }
+  .tab-content.active { display:block; }
+
+  /* ── CARDS ── */
+  .card { background:var(--bg); border:0.5px solid var(--border); border-radius:12px; padding:16px 20px; margin-bottom:12px; }
+  .card-grid { display:grid; gap:10px; margin-bottom:12px; }
+  .card-grid.cols2 { grid-template-columns:1fr 1fr; }
+  .card-grid.cols3 { grid-template-columns:1fr 1fr 1fr; }
+  .card-grid.cols4 { grid-template-columns:repeat(4,1fr); }
+  @media(max-width:600px){ .card-grid.cols4,.card-grid.cols3 { grid-template-columns:1fr 1fr; } .card-grid.cols2 { grid-template-columns:1fr; } }
+  .metric { background:var(--bg2); border-radius:8px; padding:10px 14px; }
+  .metric-label { font-size:11px; color:var(--text2); margin-bottom:4px; }
+  .metric-value { font-size:20px; font-weight:500; }
+  .metric-sub { font-size:11px; color:var(--text3); margin-top:2px; }
+
+  /* ── SECTION HEADER ── */
+  .sh { padding-left:10px; margin-bottom:16px; }
+  .sh h2 { font-size:15px; font-weight:500; }
+  .sh p { font-size:12px; color:var(--text2); margin-top:3px; }
+
+  /* ── INFO BOXES ── */
+  .infobox { border-radius:10px; padding:10px 14px; margin-bottom:10px; font-size:12px; line-height:1.6; }
+  .infobox .ib-title { font-size:12px; font-weight:500; margin-bottom:5px; }
+  .infobox.blue  { background:var(--blue-bg);   border:.5px solid var(--blue-border);   color:var(--blue); }
+  .infobox.green { background:var(--green-bg);  border:.5px solid var(--green-border);  color:var(--green); }
+  .infobox.amber { background:var(--amber-bg);  border:.5px solid var(--amber-border);  color:var(--amber); }
+  .infobox.purple{ background:var(--purple-bg); border:.5px solid var(--purple-border); color:var(--purple); }
+  .infobox.red   { background:var(--red-bg);    border:.5px solid var(--red-border);    color:var(--red); }
+
+  /* ── ROWS ── */
+  .row { display:flex; justify-content:space-between; align-items:flex-start; padding:6px 0; border-bottom:.5px solid var(--border); font-size:12px; gap:12px; }
+  .row:last-child { border-bottom:none; }
+  .row-label { color:var(--text2); flex-shrink:0; }
+  .row-value { font-weight:500; text-align:right; }
+
+  /* ── PILLS ── */
+  .pill { display:inline-block; font-size:10px; font-weight:500; padding:2px 8px; border-radius:20px; margin:2px 3px 2px 0; white-space:nowrap; }
+  .pill.blue   { background:var(--blue-bg);   color:var(--blue); }
+  .pill.green  { background:var(--green-bg);  color:var(--green); }
+  .pill.amber  { background:var(--amber-bg);  color:var(--amber); }
+  .pill.purple { background:var(--purple-bg); color:var(--purple); }
+  .pill.gray   { background:var(--bg3);       color:var(--text2); }
+  .pill.red    { background:var(--red-bg);    color:var(--red); }
+
+  /* ── PRODUCT CARDS ── */
+  .prod-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .prod-card { border-radius:8px; padding:8px 10px; }
+  .prod-card .name { font-size:12px; font-weight:500; }
+  .prod-card .desc { font-size:11px; color:var(--text2); margin-top:2px; }
+
+  /* ── PHASE BOXES ── */
+  .phase { border-radius:12px; padding:12px 14px; margin-bottom:12px; }
+  .phase-header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px; flex-wrap:wrap; gap:6px; }
+  .phase-period { font-size:10px; font-weight:500; text-transform:uppercase; letter-spacing:.07em; margin-bottom:2px; }
+  .phase-title { font-size:13px; font-weight:500; }
+  .phase-item { display:flex; gap:8px; padding:5px 0; border-bottom:.5px solid rgba(0,0,0,.07); font-size:12px; }
+  .phase-item:last-child { border-bottom:none; }
+  .phase-item-arrow { flex-shrink:0; margin-top:1px; }
+  .phase-item strong { font-weight:500; }
+
+  /* ── MATRIX TABLES ── */
+  .matrix-wrap { overflow-x:auto; margin-bottom:8px; }
+  table.matrix { width:100%; border-collapse:collapse; table-layout:fixed; font-size:11px; }
+  table.matrix th { padding:6px 4px; border-bottom:.5px solid var(--border2); font-weight:500; text-align:center; color:var(--text2); font-size:9px; vertical-align:bottom; }
+  table.matrix th.name-col { text-align:left; padding-left:8px; font-size:11px; color:var(--text); }
+  table.matrix td { padding:4px 2px; border-bottom:.5px solid var(--border); text-align:center; cursor:pointer; }
+  table.matrix td.name-col { padding:6px 8px; text-align:left; }
+  table.matrix tr.identt-row { background:var(--amber-bg); }
+  table.matrix tr:hover td { background:var(--bg2); }
+  .cell-chip { display:inline-flex; align-items:center; justify-content:center; width:22px; height:20px; border-radius:5px; font-size:11px; font-weight:500; }
+  .cell-yes  { background:var(--green-bg);  color:var(--green); }
+  .cell-maybe{ background:var(--amber-bg);  color:var(--amber); }
+  .cell-no   { background:var(--bg3);       color:var(--text3); }
+  .cell-gap  { background:var(--red-bg);    color:var(--red); }
+
+  /* ── TOOLTIP ── */
+  #tooltip-box { display:none; background:var(--bg); border:1px solid var(--blue-border); border-left:3px solid var(--blue-border); border-radius:0 10px 10px 0; padding:10px 14px; margin:8px 0 12px; position:relative; }
+  #tooltip-box .tt-title { font-size:12px; font-weight:500; color:var(--blue); margin-bottom:6px; }
+  #tooltip-box .tt-body  { font-size:12px; color:var(--text2); line-height:1.6; }
+  #tooltip-box .tt-conf  { margin-top:6px; font-size:10px; font-weight:500; padding:2px 8px; border-radius:10px; display:inline-block; }
+  #tooltip-box .close-tt { position:absolute; top:8px; right:10px; background:none; border:none; cursor:pointer; font-size:14px; color:var(--text2); }
+  #tooltip-box2 { display:none; background:var(--bg); border:1px solid var(--purple-border); border-left:3px solid var(--purple-border); border-radius:0 10px 10px 0; padding:10px 14px; margin:8px 0 12px; position:relative; }
+  #tooltip-box2 .tt-title { font-size:12px; font-weight:500; color:var(--purple); margin-bottom:6px; }
+  #tooltip-box2 .tt-body  { font-size:12px; color:var(--text2); line-height:1.6; }
+  #tooltip-box2 .tt-conf  { margin-top:6px; font-size:10px; font-weight:500; padding:2px 8px; border-radius:10px; display:inline-block; }
+  #tooltip-box2 .close-tt { position:absolute; top:8px; right:10px; background:none; border:none; cursor:pointer; font-size:14px; color:var(--text2); }
+
+  /* ── CHARTS ── */
+  .chart-container { position:relative; width:100%; }
+  .chart-legend { display:flex; flex-wrap:wrap; gap:10px; margin-bottom:10px; font-size:11px; color:var(--text2); }
+  .chart-legend span { display:flex; align-items:center; gap:5px; }
+  .legend-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+  .legend-sq  { width:10px; height:10px; border-radius:2px; flex-shrink:0; }
+
+  /* ── SECTION LABEL ── */
+  .section-label { font-size:11px; font-weight:500; color:var(--text2); text-transform:uppercase; letter-spacing:.07em; margin:20px 0 10px; }
+
+  /* ── FOOTER ── */
+  footer { margin-top:24px; padding:10px 14px; background:var(--bg3); border-radius:8px; font-size:10px; color:var(--text3); }
+
+  /* print */
+  @media print { nav { display:none; } .tab-content { display:block !important; } .main { max-width:100%; padding:10px; } }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div>
+      <div class="header-eyebrow">Market intelligence</div>
+      <h1>IDENTT research dashboard</h1>
+      <div class="header-sub">ID verification · biometrics · KYC · Wrocław, Poland</div>
+    </div>
+    <span class="badge" style="background:var(--green-bg);color:var(--green);border:.5px solid var(--green-border)">Updated May 2026</span>
+  </div>
+</div>
+
+<nav id="nav"></nav>
+
+<div class="main">
+
+  <!-- TIER LEGEND (shown on all tabs) -->
+  <div class="tier-legend">
+    <span>Tier:</span>
+    <span><span class="pill amber">Enterprise</span> Global scale · Gartner MQ · $50K+/yr</span>
+    <span><span class="pill blue">Growth</span> Expanding · transparent pricing · strong brand</span>
+    <span><span class="pill green">Regional</span> Geography/niche focus · SMB to mid-market</span>
+  </div>
+
+  <!-- ════════════════════════════════════════════ OVERVIEW ════ -->
+  <div class="tab-content active" id="tab-overview">
+    <div class="sh" style="border-left:3px solid #378ADD"><h2>IDENTT at a glance</h2><p>AI-powered identity verification & KYC · Wrocław, Poland</p></div>
+    <div class="card-grid cols4">
+      <div class="metric"><div class="metric-label">Founded</div><div class="metric-value">2015</div><div class="metric-sub">Wrocław, Poland</div></div>
+      <div class="metric"><div class="metric-label">Active in</div><div class="metric-value">12+</div><div class="metric-sub">countries</div></div>
+      <div class="metric"><div class="metric-label">ID docs DB</div><div class="metric-value">194+</div><div class="metric-sub">countries covered</div></div>
+      <div class="metric"><div class="metric-label">Legal entities</div><div class="metric-value">3</div><div class="metric-sub">DE · CH · PL</div></div>
+    </div>
+    <div class="card">
+      <div style="font-size:13px;font-weight:500;margin-bottom:10px">Core product suite</div>
+      <div class="prod-grid">
+        <div class="prod-card" style="background:var(--blue-bg)"><div class="name" style="color:var(--blue)">IDENTT Vision</div><div class="desc">Auto AI doc + biometric verification — flagship (2017)</div></div>
+        <div class="prod-card" style="background:var(--blue-bg)"><div class="name" style="color:var(--blue)">IDENTT Video</div><div class="desc">Live consultant + real-time doc check via videochat</div></div>
+        <div class="prod-card" style="background:var(--purple-bg)"><div class="name" style="color:var(--purple)">IDENTT Knowledge</div><div class="desc">Reference DB: 194-country ID docs + banknote data</div></div>
+        <div class="prod-card" style="background:var(--purple-bg)"><div class="name" style="color:var(--purple)">IDENTT App</div><div class="desc">NFC-based biometric verification — Jan 2026</div></div>
+        <div class="prod-card" style="background:var(--green-bg)"><div class="name" style="color:var(--green)">Facelab</div><div class="desc">Face-match biometrics; handles appearance changes over time</div></div>
+        <div class="prod-card" style="background:var(--green-bg)"><div class="name" style="color:var(--green)">Liveness detection</div><div class="desc">Anti-spoofing: blocks photo / video / deepfake attacks</div></div>
+        <div class="prod-card" style="background:var(--amber-bg)"><div class="name" style="color:var(--amber)">OCR Engine</div><div class="desc">Data extraction from identity docs across 194 countries</div></div>
+        <div class="prod-card" style="background:var(--amber-bg)"><div class="name" style="color:var(--amber)">Sanctions & PEP</div><div class="desc">Screening against sanctions lists and PEP registers</div></div>
+        <div class="prod-card" style="background:var(--red-bg)"><div class="name" style="color:var(--red)">eID / EUDI</div><div class="desc">NFC chip reading + EU Digital Identity Wallet integration</div></div>
+        <div class="prod-card" style="background:var(--red-bg)"><div class="name" style="color:var(--red)">Proof of Address</div><div class="desc">Address validation as add-on to identity proofing</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div style="font-size:13px;font-weight:500;margin-bottom:8px">Target verticals</div>
+      <div>
+        <span class="pill blue">Banking</span><span class="pill blue">Finance & insurance</span><span class="pill blue">Crypto</span><span class="pill blue">E-commerce</span><span class="pill blue">Public sector</span><span class="pill blue">Gambling</span><span class="pill blue">Telecom</span><span class="pill blue">HR</span><span class="pill blue">Health</span><span class="pill blue">Rental</span><span class="pill blue">Payments</span>
+      </div>
+    </div>
+
+    <div class="section-label">Competitive positioning</div>
+    <div class="card">
+      <div style="font-size:12px;font-weight:500;margin-bottom:8px">Strategic radar — IDENTT vs. peers</div>
+      <div class="chart-legend">
+        <span><span class="legend-dot" style="background:#BA7517"></span>IDENTT</span>
+        <span><span class="legend-dot" style="background:#378ADD"></span>Jumio</span>
+        <span><span class="legend-dot" style="background:#1D9E75"></span>Veriff</span>
+        <span><span class="legend-dot" style="background:#7F77DD"></span>Sumsub</span>
+        <span><span class="legend-dot" style="background:#888780"></span>IDnow</span>
+        <span><span class="legend-dot" style="background:#D85A30"></span>iDenfy/Ondato</span>
+      </div>
+      <div class="chart-container" style="height:300px"><canvas id="radarChart"></canvas></div>
+    </div>
+    <div class="card-grid cols2">
+      <div class="card" style="margin-bottom:0">
+        <div style="font-size:12px;font-weight:500;margin-bottom:6px">Product coverage <span style="font-weight:400;color:var(--text2)">/ 15</span></div>
+        <div class="chart-legend"><span><span class="legend-sq" style="background:#BA7517"></span>IDENTT</span><span><span class="legend-sq" style="background:#378ADD"></span>Peers</span></div>
+        <div class="chart-container" style="height:260px"><canvas id="productChart"></canvas></div>
+      </div>
+      <div class="card" style="margin-bottom:0">
+        <div style="font-size:12px;font-weight:500;margin-bottom:6px">Channel coverage <span style="font-weight:400;color:var(--text2)">/ 11</span></div>
+        <div class="chart-legend"><span><span class="legend-sq" style="background:#BA7517"></span>IDENTT</span><span><span class="legend-sq" style="background:#378ADD"></span>Peers</span></div>
+        <div class="chart-container" style="height:260px"><canvas id="channelChart"></canvas></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════ COMPANY INTEL ════ -->
+  <div class="tab-content" id="tab-company">
+    <div class="sh" style="border-left:3px solid #534AB7"><h2>Company intelligence</h2><p>Financials, leadership, ownership, structure — from Polish KRS registry</p></div>
+    <div class="infobox blue"><div class="ib-title">Financial performance — IDENTT Sp. z o.o. (Polish entity only)</div>Revenue grows +24% YoY in 2023. These cover Poland only; German and Swiss entities add additional undisclosed revenue. Source: KRS financial filings.</div>
+    <div class="card-grid cols4">
+      <div class="metric"><div class="metric-label">Revenue 2021</div><div class="metric-value">PLN 6.7M</div><div class="metric-sub">~€1.6M</div></div>
+      <div class="metric"><div class="metric-label">Revenue 2022</div><div class="metric-value">PLN 10.0M</div><div class="metric-sub">~€2.3M</div></div>
+      <div class="metric"><div class="metric-label">Revenue 2023</div><div class="metric-value">PLN 12.3M</div><div class="metric-sub">~€2.9M</div></div>
+      <div class="metric"><div class="metric-label">Gross profit 2023</div><div class="metric-value">PLN 2.9M</div><div class="metric-sub">~23% margin</div></div>
+    </div>
+    <div class="card-grid cols2">
+      <div class="card" style="margin-bottom:0">
+        <div style="font-size:12px;font-weight:500;margin-bottom:8px">Leadership</div>
+        <div class="row"><span class="row-label">CEO</span><span class="row-value">Jan Kazimierz Szajda (b. 1990)</span></div>
+        <div class="row" style="border:none"><span class="row-label">VP</span><span class="row-value">Piotr Tomasz Giedziun (b. 1991)</span></div>
+      </div>
+      <div class="card" style="margin-bottom:0">
+        <div style="font-size:12px;font-weight:500;margin-bottom:8px">Legal details</div>
+        <div class="row"><span class="row-label">Share capital</span><span class="row-value">PLN 100,000</span></div>
+        <div class="row"><span class="row-label">KRS</span><span class="row-value">0000586371</span></div>
+        <div class="row"><span class="row-label">NIP</span><span class="row-value">8982215099</span></div>
+        <div class="row" style="border:none"><span class="row-label">Founded</span><span class="row-value">17 Nov 2015</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <div style="font-size:13px;font-weight:500;margin-bottom:8px">Corporate structure</div>
+      <div class="row"><span class="pill blue" style="white-space:nowrap;flex-shrink:0">IDENTT GmbH</span><span style="font-size:12px;color:var(--text2)">Hamburg, Germany · Founded 1999 · IDENTT Knowledge origin</span></div>
+      <div class="row"><span class="pill purple" style="white-space:nowrap;flex-shrink:0">IDENTT SWISS GmbH</span><span style="font-size:12px;color:var(--text2)">Switzerland · Founded 2009 · International sales & marketing · holds 40 shares in Polish entity</span></div>
+      <div class="row" style="border:none"><span class="pill green" style="white-space:nowrap;flex-shrink:0">IDENTT Sp. z o.o.</span><span style="font-size:12px;color:var(--text2)">Wrocław, Poland · Founded 2015 · Primary R&D and operational entity</span></div>
+    </div>
+    <div class="card">
+      <div style="font-size:13px;font-weight:500;margin-bottom:8px">Partner program</div>
+      <div class="card-grid cols3">
+        <div style="background:var(--blue-bg);border-radius:8px;padding:8px 10px"><div style="font-size:12px;font-weight:500;color:var(--blue)">Referral</div><div style="font-size:11px;color:var(--text2);margin-top:3px">Commission for lead referrals</div></div>
+        <div style="background:var(--purple-bg);border-radius:8px;padding:8px 10px"><div style="font-size:12px;font-weight:500;color:var(--purple)">Reseller</div><div style="font-size:11px;color:var(--text2);margin-top:3px">White-label / resale of IDENTT products</div></div>
+        <div style="background:var(--green-bg);border-radius:8px;padding:8px 10px"><div style="font-size:12px;font-weight:500;color:var(--green)">Integrator</div><div style="font-size:11px;color:var(--text2);margin-top:3px">Build IDENTT tech into custom client systems</div></div>
+      </div>
+    </div>
+    <div class="infobox purple"><div class="ib-title">Digital ID Forum — IDENTT's own conference</div>IDENTT organises Digital ID Forum, an international conference on digital identity, biometrics, cybersecurity, and AI held in Wrocław. The 2026 edition ran 18–19 May — 50+ speakers, 8 panels, 20 presentations. A unique thought leadership asset in CEE.</div>
+  </div>
+
+  <!-- ════════════════════════════════════════ MARKET SNAPSHOT ════ -->
+  <div class="tab-content" id="tab-market">
+    <div class="sh" style="border-left:3px solid #1D9E75"><h2>Market snapshot — IDV & biometrics</h2><p>Europe focus · structured per your brief</p></div>
+    <div class="infobox blue">
+      <div class="ib-title">A · IDV TAM (Europe)</div>
+      <div class="row"><span class="row-label">TAM 2025 (Europe IDV)</span><span class="row-value">$3.5–4.2B (€3.2–3.9B)</span></div>
+      <div class="row"><span class="row-label">3-year CAGR (2025–2028)</span><span class="row-value">~15–17%</span></div>
+      <div class="row"><span class="row-label">Projected 2030</span><span class="row-value">$7.7B (MarketsandMarkets)</span></div>
+      <div class="row"><span class="row-label">Biometrics (Europe) 2024</span><span class="row-value">$12.4B · CAGR 13.7% to 2033</span></div>
+      <div class="row" style="border:none"><span class="row-label">Global IDV 2025</span><span class="row-value">$16.6B · CAGR 18.2% to 2033</span></div>
+    </div>
+    <div class="infobox green">
+      <div class="ib-title">A · Banking sector context</div>
+      <div class="row"><span class="row-label">Eurozone credit institutions</span><span class="row-value">~5,500 licensed banks (ECB)</span></div>
+      <div class="row"><span class="row-label">Eurozone total assets</span><span class="row-value">&gt;€30T</span></div>
+      <div class="row"><span class="row-label">Polish licensed banks/credit unions</span><span class="row-value">~600</span></div>
+      <div class="row"><span class="row-label">BFSI share of EU IDV market</span><span class="row-value">est. 25–35% of total IDV spend</span></div>
+      <div class="row" style="border:none"><span class="row-label">Banking IDV driver</span><span class="row-value">AML6, KYC, PSD2, eIDAS 2.0</span></div>
+    </div>
+    <div class="card">
+      <div style="font-size:13px;font-weight:500;margin-bottom:10px">A · Notable growth drivers</div>
+      <div style="display:grid;gap:8px">
+        <div style="background:var(--blue-bg);border-radius:8px;padding:8px 10px"><div style="font-size:12px;font-weight:500;color:var(--blue);margin-bottom:3px">🚀 EUDI Wallet rollout (Dec 2026 / Dec 2027)</div><div style="font-size:12px;color:var(--text2)">All EU states must issue EUDI Wallets by end-2026. Banks must accept them by Dec 2027. April 2026 EU regulation mandates ETSI TS 119 461 — creates immediate procurement demand for certified IDV providers.</div></div>
+        <div style="background:var(--purple-bg);border-radius:8px;padding:8px 10px"><div style="font-size:12px;font-weight:500;color:var(--purple);margin-bottom:3px">🚀 eIDAS 2.0 & AML6 compliance wave</div><div style="font-size:12px;color:var(--text2)">New implementing regs create a compliance floor. Companies already certified (like IDENTT) benefit disproportionately.</div></div>
+        <div style="background:var(--green-bg);border-radius:8px;padding:8px 10px"><div style="font-size:12px;font-weight:500;color:var(--green);margin-bottom:3px">🚀 Neobank & fintech scaling</div><div style="font-size:12px;color:var(--text2)">Digital-first financial services requiring 100% remote onboarding are driving the IDV demand surge across the BFSI vertical.</div></div>
+        <div style="background:var(--amber-bg);border-radius:8px;padding:8px 10px"><div style="font-size:12px;font-weight:500;color:var(--amber);margin-bottom:3px">🚀 Deepfake & AI fraud acceleration</div><div style="font-size:12px;color:var(--text2)">AI-generated identity fraud is driving rapid adoption of liveness detection and biometric verification even among mid-market buyers.</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div style="font-size:13px;font-weight:500;margin-bottom:10px">A · Notable headwinds</div>
+      <div class="row"><div><div style="font-size:12px;font-weight:500">⚠️ National eID schemes displacing third-party IDV</div><div style="font-size:12px;color:var(--text2);margin-top:2px">Poland's mObywatel and other government ID schemes handle certain regulated flows natively.</div></div></div>
+      <div class="row"><div><div style="font-size:12px;font-weight:500">⚠️ GDPR biometric data constraints</div><div style="font-size:12px;color:var(--text2);margin-top:2px">Strict EU restrictions on biometric data storage and retention limit deployment models.</div></div></div>
+      <div class="row"><div><div style="font-size:12px;font-weight:500">⚠️ Fragmented EU eID architectures</div><div style="font-size:12px;color:var(--text2);margin-top:2px">27 different national implementations limit cross-border interoperability.</div></div></div>
+      <div class="row" style="border:none"><div><div style="font-size:12px;font-weight:500">⚠️ Big Tech wallet connector risk</div><div style="font-size:12px;color:var(--text2);margin-top:2px">Google/Apple may capture the eIDAS 2.0 Wallet Connector market, marginalising third-party IDV providers.</div></div></div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════ CLIENTS ════ -->
+  <div class="tab-content" id="tab-clients">
+    <div class="sh" style="border-left:3px solid #1D9E75"><h2>Known clients</h2><p>Publicly confirmed references — Biometric Update, Jan 2026</p></div>
+    <div class="infobox amber"><div class="ib-title">Coverage note</div>IDENTT does not publish a full client list. These are the only publicly named references. The company claims to serve clients in 12 countries.</div>
+    <div id="client-cards"></div>
+    <div class="card">
+      <div style="font-size:13px;font-weight:500;margin-bottom:8px">Client acquisition channels (inferred)</div>
+      <div class="row"><span style="font-size:12px;color:var(--text3);flex-shrink:0">→</span><span style="font-size:12px;color:var(--text2)">Direct enterprise sales (CEO/founder-led for key accounts)</span></div>
+      <div class="row"><span style="font-size:12px;color:var(--text3);flex-shrink:0">→</span><span style="font-size:12px;color:var(--text2)">Digital ID Forum — creates warm pipeline with decision-makers</span></div>
+      <div class="row"><span style="font-size:12px;color:var(--text3);flex-shrink:0">→</span><span style="font-size:12px;color:var(--text2)">Partner program: resellers and integrators extend reach in non-Polish markets</span></div>
+      <div class="row"><span style="font-size:12px;color:var(--text3);flex-shrink:0">→</span><span style="font-size:12px;color:var(--text2)">EU co-funded projects: generate credibility and inbound for public sector</span></div>
+      <div class="row"><span style="font-size:12px;color:var(--text3);flex-shrink:0">→</span><span style="font-size:12px;color:var(--text2)">ZPF membership: network access to Polish financial institutions</span></div>
+      <div class="row" style="border:none"><span style="font-size:12px;color:var(--text3);flex-shrink:0">→</span><span style="font-size:12px;color:var(--text2)">International AI & cybersecurity trade fairs (EU-funded presence program)</span></div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════ COMPETITORS ════ -->
+  <div class="tab-content" id="tab-competitors">
+    <div class="sh" style="border-left:3px solid #D85A30"><h2>Competitive landscape + channel intelligence</h2><p>B · Europe/UK + USA · channel data sourced May 2026</p></div>
+    <div class="infobox amber"><div class="ib-title">B · Competitive intensity</div><strong>Crowded</strong> — 10+ well-funded global vendors plus 5+ CEE/regional specialists. IDENTT operates as a mid-tier European player with proprietary AI, CEE regulatory track record, and unique integrations (mObywatel, EUDI) that global vendors lack natively.</div>
+
+    <div style="font-size:12px;font-weight:500;margin-bottom:8px">B · Top 3 IDV vendors in Europe/UK</div>
+    <div class="card-grid cols3" style="margin-bottom:14px">
+      <div style="background:var(--blue-bg);border:.5px solid var(--blue-border);border-radius:10px;padding:8px 10px;text-align:center"><div style="font-size:11px">🇺🇸</div><div style="font-size:12px;font-weight:500;color:var(--blue);margin-top:2px">Jumio</div><span class="pill blue" style="margin-top:4px">Global</span></div>
+      <div style="background:var(--blue-bg);border:.5px solid var(--blue-border);border-radius:10px;padding:8px 10px;text-align:center"><div style="font-size:11px">🇬🇧</div><div style="font-size:12px;font-weight:500;color:var(--blue);margin-top:2px">Onfido (Entrust IDV)</div><span class="pill blue" style="margin-top:4px">Global</span></div>
+      <div style="background:var(--blue-bg);border:.5px solid var(--blue-border);border-radius:10px;padding:8px 10px;text-align:center"><div style="font-size:11px">🇪🇪</div><div style="font-size:12px;font-weight:500;color:var(--blue);margin-top:2px">Veriff</div><span class="pill blue" style="margin-top:4px">Global</span></div>
+    </div>
+
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;align-items:center">
+      <div style="font-size:12px;font-weight:500">Channel matrix</div>
+      <div style="display:flex;gap:5px;margin-left:auto;flex-wrap:wrap">
+        <span class="pill green" style="border:.5px solid var(--border)">✓ Confirmed</span>
+        <span class="pill amber" style="border:.5px solid var(--border)">~ Likely</span>
+        <span class="pill gray"  style="border:.5px solid var(--border)">? Unknown</span>
+        <span class="pill red"   style="border:.5px solid var(--border)">✗ Gap</span>
+      </div>
+    </div>
+    <div style="font-size:11px;color:var(--text2);margin-bottom:10px">Tap any cell for detail. IDENTT row highlighted in amber.</div>
+    <div class="matrix-wrap"><table class="matrix" id="channelMatrix"></table></div>
+    <div id="tooltip-box">
+      <div class="tt-title" id="tt-title"></div>
+      <div class="tt-body" id="tt-body"></div>
+      <div class="tt-conf" id="tt-conf"></div>
+      <button class="close-tt" onclick="document.getElementById('tooltip-box').style.display='none'">✕</button>
+    </div>
+
+    <div class="card" style="margin-top:8px">
+      <div style="font-size:13px;font-weight:500;margin-bottom:10px">Channel coverage summary</div>
+      <div class="row"><span class="pill blue">LinkedIn</span><span style="font-size:12px;color:var(--text2)">All 9 confirmed active. Jumio (51.9K) and Veriff (46.7K) lead. Sumsub (45.4K) close. IDnow (18.4K) smaller. IDENTT present but low English engagement.</span></div>
+      <div class="row"><span class="pill purple">Blog / SEO</span><span style="font-size:12px;color:var(--text2)">All major players publish heavily. iDenfy and Ondato use SEO comparison content as primary acquisition. Veriff and Sumsub publish annual fraud reports.</span></div>
+      <div class="row"><span class="pill amber">G2 / Review</span><span style="font-size:12px;color:var(--text2)">Jumio, Onfido, Veriff, Sumsub, iDenfy, Shufti all listed. IDENTT absent — a critical procurement gap.</span></div>
+      <div class="row"><span class="pill amber">Analyst</span><span style="font-size:12px;color:var(--text2)">Jumio, Entrust, Sumsub in Gartner MQ 2025. Shufti in KuppingerCole. IDENTT absent from all analyst reports.</span></div>
+      <div class="row"><span class="pill green">Podcast</span><span style="font-size:12px;color:var(--text2)">Veriff (Veriff Voices) and Jumio (CyberBytes) are the only two with dedicated owned podcasts.</span></div>
+      <div class="row" style="border:none"><span class="pill red">IDENTT gaps</span><span style="font-size:12px;color:var(--text2)">Absent from: G2, Gartner/Forrester/KuppingerCole, podcast, Twitter/X, YouTube, webinars. Blog underdeveloped in English.</span></div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════ PRODUCTS ════ -->
+  <div class="tab-content" id="tab-products">
+    <div class="sh" style="border-left:3px solid #534AB7"><h2>Product capability matrix</h2><p>Sourced from product pages, developer docs, and third-party analyst reviews — May 2026</p></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;align-items:center">
+      <div style="font-size:12px;font-weight:500">Product coverage</div>
+      <div style="display:flex;gap:5px;margin-left:auto;flex-wrap:wrap">
+        <span class="pill green" style="border:.5px solid var(--border)">✓ Confirmed</span>
+        <span class="pill amber" style="border:.5px solid var(--border)">~ Unconfirmed</span>
+        <span class="pill gray"  style="border:.5px solid var(--border)">— Not offered</span>
+        <span class="pill red"   style="border:.5px solid var(--border)">✗ IDENTT gap</span>
+      </div>
+    </div>
+    <div style="font-size:11px;color:var(--text2);margin-bottom:10px">Tap any cell for the sourced detail note. IDENTT row highlighted in amber.</div>
+    <div class="matrix-wrap"><table class="matrix" id="productMatrix"></table></div>
+    <div id="tooltip-box2">
+      <div class="tt-title" id="tt2-title"></div>
+      <div class="tt-body" id="tt2-body"></div>
+      <div class="tt-conf" id="tt2-conf"></div>
+      <button class="close-tt" onclick="document.getElementById('tooltip-box2').style.display='none'">✕</button>
+    </div>
+    <div class="card" style="margin-top:8px">
+      <div style="font-size:13px;font-weight:500;margin-bottom:10px">IDENTT product gap analysis</div>
+      <div class="row"><span class="pill green">Transaction monitoring</span><span style="font-size:12px;color:var(--text2)">Not in scope for IDENTT. None of the CEE/regional competitors offer it either. Only Jumio and Sumsub have full TM.</span></div>
+      <div class="row"><span class="pill amber">No-code orchestration</span><span style="font-size:12px;color:var(--text2)">Onfido Workflow Studio, Sumsub, Ondato, and Fourthline all offer no-code journey builders. IDENTT relies on API/SDK only.</span></div>
+      <div class="row"><span class="pill amber">Ongoing KYC</span><span style="font-size:12px;color:var(--text2)">Continuous monitoring is offered by most competitors including regional players (iDenfy, Ondato).</span></div>
+      <div class="row"><span class="pill amber">KYB</span><span style="font-size:12px;color:var(--text2)">Jumio, Veriff, Sumsub, iDenfy, Shufti Pro, and Ondato all offer KYB. IDENTT does not confirm KYB as a product.</span></div>
+      <div class="row"><span class="pill amber">eSign (QES)</span><span style="font-size:12px;color:var(--text2)">IDnow and Fourthline offer QES eSign. Relevant for German/EU banking onboarding flows.</span></div>
+      <div class="row" style="border:none"><span class="pill blue">Banknote DB ★</span><span style="font-size:12px;color:var(--text2)">IDENTT Knowledge is the only IDV vendor with a banknote DB. No competitor offers this.</span></div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════ GEOGRAPHY ════ -->
+  <div class="tab-content" id="tab-geography">
+    <div class="sh" style="border-left:3px solid #1D9E75"><h2>Geographic footprint</h2><p>Confirmed offices + client-evidenced presence</p></div>
+    <div id="geo-cards"></div>
+    <div class="card">
+      <div style="font-size:13px;font-weight:500;margin-bottom:10px">Expansion priority map</div>
+      <div class="row"><div><span class="pill green">🎯 High: Nordics (SE, FI, NO)</span><span style="font-size:12px;color:var(--text2);margin-left:6px">Advanced biometric adoption, neobank proliferation, strong eIDAS compliance market</span></div></div>
+      <div class="row"><div><span class="pill green">🎯 High: Baltics (EE, LV, LT)</span><span style="font-size:12px;color:var(--text2);margin-left:6px">Digital-first governments, eIDAS leaders, iDenfy & Ondato home turf to challenge</span></div></div>
+      <div class="row"><div><span class="pill green">🎯 High: DACH deeper</span><span style="font-size:12px;color:var(--text2);margin-left:6px">Hamburg entity already there; Austria and mid-market German banks underleveraged</span></div></div>
+      <div class="row"><div><span class="pill blue">🎯 Medium: Benelux</span><span style="font-size:12px;color:var(--text2);margin-left:6px">Dense fintech ecosystem, EU regulatory testbed, Fourthline home market</span></div></div>
+      <div class="row"><div><span class="pill gray">🌍 Watch: UK</span><span style="font-size:12px;color:var(--text2);margin-left:6px">DVS trust framework (Data Use & Access Act 2025) creates new certified IDV demand</span></div></div>
+      <div class="row"><div><span class="pill gray">🌍 Watch: Africa</span><span style="font-size:12px;color:var(--text2);margin-left:6px">High-growth IDV market; Johannesburg win is a proof point</span></div></div>
+      <div class="row" style="border:none"><div><span class="pill gray">🌍 Watch: MENA</span><span style="font-size:12px;color:var(--text2);margin-left:6px">Gulf states have aggressive digital transformation; Swiss entity credibility useful here</span></div></div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════ GO-TO-MARKET ════ -->
+  <div class="tab-content" id="tab-gtm">
+    <div class="sh" style="border-left:3px solid #D85A30"><h2>Go-to-Market strategy & growth roadmap</h2><p>Organic + paid channels · timeline · revenue projections · organic growth assumed (no fundraise)</p></div>
+
+    <div class="card">
+      <div style="font-size:13px;font-weight:500;margin-bottom:4px">Revenue & marketing budget projection — 2023–2030</div>
+      <div style="font-size:11px;color:var(--text2);margin-bottom:12px">Solid lines = revenue · Dashed lines = 20% marketing reinvestment · Blue = organic only · Green = organic + ads (ads launch Q1 2027)</div>
+      <div class="chart-container" style="height:260px"><canvas id="growthChart"></canvas></div>
+      <div class="card-grid cols2" style="margin-top:14px">
+        <div style="background:var(--blue-bg);border-radius:8px;padding:8px 12px"><div style="font-size:11px;color:var(--blue);margin-bottom:3px">2030 revenue — organic only</div><div style="font-size:16px;font-weight:500;color:var(--blue)">€11.5M</div></div>
+        <div style="background:var(--green-bg);border-radius:8px;padding:8px 12px"><div style="font-size:11px;color:var(--green);margin-bottom:3px">2030 revenue — organic + ads</div><div style="font-size:16px;font-weight:500;color:var(--green)">€16.2M</div></div>
+        <div style="background:var(--green-bg);border-radius:8px;padding:8px 12px"><div style="font-size:11px;color:var(--green);margin-bottom:3px">Ads uplift by 2030</div><div style="font-size:16px;font-weight:500;color:var(--green)">+€4.7M (~41%)</div></div>
+        <div style="background:var(--amber-bg);border-radius:8px;padding:8px 12px"><div style="font-size:11px;color:var(--amber);margin-bottom:3px">Cumulative ad spend 2027–2030</div><div style="font-size:16px;font-weight:500;color:var(--amber)">~€500–700K</div></div>
+      </div>
+    </div>
+
+    <div class="section-label">Reality check — with a dedicated marketing team</div>
+    <div class="infobox amber"><div class="ib-title">Assumptions — sourced from Polish salary market data (PayScale, SalaryExpert, 2025–2026)</div>Team hired mid-2026. All salaries are gross + ~25% employer social contributions (ZUS). Initiatives budget: €6,000/month as provided.</div>
+    <div class="card-grid cols2">
+      <div style="background:var(--blue-bg);border-radius:8px;padding:8px 12px"><div style="font-size:11px;font-weight:500;color:var(--blue)">Marketing Manager</div><div style="font-size:10px;color:var(--text2);margin-top:2px">PLN 17,000–18,000/mo gross</div><div style="font-size:14px;font-weight:500;color:var(--blue);margin-top:3px">~€4,000/mo</div></div>
+      <div style="background:var(--purple-bg);border-radius:8px;padding:8px 12px"><div style="font-size:11px;font-weight:500;color:var(--purple)">Content Writer</div><div style="font-size:10px;color:var(--text2);margin-top:2px">PLN 7,000–10,000/mo gross</div><div style="font-size:14px;font-weight:500;color:var(--purple);margin-top:3px">~€1,900/mo</div></div>
+      <div style="background:var(--green-bg);border-radius:8px;padding:8px 12px"><div style="font-size:11px;font-weight:500;color:var(--green)">Performance & Lead Gen</div><div style="font-size:10px;color:var(--text2);margin-top:2px">PLN 9,000–13,000/mo gross</div><div style="font-size:14px;font-weight:500;color:var(--green);margin-top:3px">~€2,500/mo</div></div>
+      <div style="background:var(--amber-bg);border-radius:8px;padding:8px 12px"><div style="font-size:11px;font-weight:500;color:var(--amber)">Event Manager</div><div style="font-size:10px;color:var(--text2);margin-top:2px">PLN 8,000–11,000/mo gross</div><div style="font-size:14px;font-weight:500;color:var(--amber);margin-top:3px">~€2,200/mo</div></div>
+    </div>
+    <div class="card">
+      <div style="font-size:12px;font-weight:500;margin-bottom:10px">Monthly cost breakdown</div>
+      <div class="row"><span class="row-label">4 salaries (gross)</span><span class="row-value">~€10,600/month</span></div>
+      <div class="row"><span class="row-label">Employer contributions (~25% ZUS)</span><span class="row-value">~€2,650/month</span></div>
+      <div class="row"><span class="row-label">Total team employment cost</span><span class="row-value">~€13,250/month</span></div>
+      <div class="row"><span class="row-label">Marketing initiatives (provided)</span><span class="row-value">€6,000/month</span></div>
+      <div class="row"><span class="row-label" style="font-weight:500;color:var(--text)">Total monthly investment</span><span class="row-value" style="color:var(--green)">~€19,250/month</span></div>
+      <div class="row" style="border:none"><span class="row-label" style="font-weight:500;color:var(--text)">Total annual investment</span><span class="row-value" style="color:var(--green)">~€231,000/year</span></div>
+    </div>
+    <div class="card">
+      <div style="font-size:12px;font-weight:500;margin-bottom:4px">Reality check — revenue vs. investment (2025–2030)</div>
+      <div style="font-size:11px;color:var(--text2);margin-bottom:12px">Lines = revenue scenarios · Bars = annual investment cost · Right axis = investment scale</div>
+      <div class="chart-container" style="height:280px"><canvas id="realityChart"></canvas></div>
+    </div>
+    <div class="card-grid cols3">
+      <div style="background:var(--bg3);border-radius:8px;padding:8px 10px"><div style="font-size:10px;color:var(--text2);margin-bottom:3px">2030 revenue — no team</div><div style="font-size:15px;font-weight:500">€12.5M</div></div>
+      <div style="background:var(--green-bg);border-radius:8px;padding:8px 10px"><div style="font-size:10px;color:var(--green);margin-bottom:3px">2030 revenue — with team</div><div style="font-size:15px;font-weight:500;color:var(--green)">€14.8M</div></div>
+      <div style="background:var(--green-bg);border-radius:8px;padding:8px 10px"><div style="font-size:10px;color:var(--green);margin-bottom:3px">Team revenue uplift 2030</div><div style="font-size:15px;font-weight:500;color:var(--green)">+€2.3M</div></div>
+      <div style="background:var(--amber-bg);border-radius:8px;padding:8px 10px"><div style="font-size:10px;color:var(--amber);margin-bottom:3px">Total team investment 2027–2030</div><div style="font-size:15px;font-weight:500;color:var(--amber)">~€694K</div></div>
+      <div style="background:var(--green-bg);border-radius:8px;padding:8px 10px"><div style="font-size:10px;color:var(--green);margin-bottom:3px">ROI on team investment</div><div style="font-size:15px;font-weight:500;color:var(--green)">~3.5×</div></div>
+      <div style="background:var(--blue-bg);border-radius:8px;padding:8px 10px"><div style="font-size:10px;color:var(--blue);margin-bottom:3px">Break-even on team cost</div><div style="font-size:15px;font-weight:500;color:var(--blue)">~2027 Q3</div></div>
+    </div>
+
+    <div class="section-label">Execution timeline</div>
+    <div id="phases"></div>
+
+    <div class="section-label">Core strategic recommendations</div>
+    <div id="recs"></div>
+
+    <div class="infobox red">
+      <div class="ib-title">Single highest-ROI action — do this week</div>
+      Submit a G2 profile and email 5 existing clients asking for a review. Cost: zero. Removes a hard blocker in enterprise procurement within 60 days. Every month without it, competitors are capturing buyers IDENTT cannot be found by.
+    </div>
+  </div>
+
+  <footer>Sources: identt.pl · Biometric Update (Jan 2026) · GoWork/KRS financial filings · CyberMadeInPoland · MarketsandMarkets · IMARC Group · Shufti Pro · IDnow Regulatory Radar · fscom · eIDAS 2.0 EU Commission · Digital ID Forum 2026 · KRS Infoveriti · LinkedIn company pages · vendor product pages (May 2026) · PayScale / SalaryExpert Poland 2025–2026</footer>
+</div>
+
+<script>
+// ══════════════════════════════════════════ TAB ROUTING ══
+const TABS = [
+  {id:'overview',   label:'Overview'},
+  {id:'company',    label:'Company Intel'},
+  {id:'market',     label:'Market Snapshot'},
+  {id:'clients',    label:'Clients'},
+  {id:'competitors',label:'Competitors'},
+  {id:'products',   label:'Products'},
+  {id:'geography',  label:'Geography'},
+  {id:'gtm',        label:'Go-to-Market'},
+];
+const nav = document.getElementById('nav');
+TABS.forEach(t => {
+  const btn = document.createElement('button');
+  btn.textContent = t.label;
+  btn.dataset.tab = t.id;
+  if (t.id === 'overview') btn.classList.add('active');
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + t.id).classList.add('active');
+  });
+  nav.appendChild(btn);
+});
+
+// ══════════════════════════════════════════ DATA ══
+const textCol = '#5F5E5A';
+const gridCol = 'rgba(0,0,0,0.07)';
+Chart.defaults.font.family = '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+Chart.defaults.color = textCol;
+
+const clients = [
+  {name:'MetLife',sector:'Insurance',country:'🇵🇱 Poland',note:'KYC & digital onboarding',bg:'#E6F1FB',tc:'#0C447C'},
+  {name:'Bank BPS',sector:'Banking',country:'🇵🇱 Poland',note:'KYC & digital onboarding',bg:'#EAF3DE',tc:'#27500A'},
+  {name:'Bank Polski (PKO BP)',sector:'Banking',country:'🇵🇱 Poland',note:'KYC & digital onboarding',bg:'#EAF3DE',tc:'#27500A'},
+  {name:'Fortuna Entertainment Group',sector:'Gambling/Betting',country:'🇪🇺 CEE (CZ/SK/PL/HR)',note:'Age & identity verification',bg:'#FAEEDA',tc:'#633806'},
+  {name:'City of Johannesburg',sector:'Public sector',country:'🇿🇦 South Africa',note:'Municipal services identity platform',bg:'#EEEDFE',tc:'#3C3489'},
+];
+const cc = document.getElementById('client-cards');
+clients.forEach(c => {
+  cc.innerHTML += `<div class="card" style="display:flex;justify-content:space-between;align-items:center;border-left:3px solid ${c.bg};border-radius:0 12px 12px 0;margin-bottom:8px">
+    <div><div style="font-size:14px;font-weight:500">${c.name}</div><div style="font-size:12px;color:var(--text2);margin-top:2px">${c.note}</div></div>
+    <div style="text-align:right;flex-shrink:0;margin-left:12px"><div style="background:${c.bg};border-radius:6px;padding:3px 8px;font-size:11px;font-weight:500;color:${c.tc};margin-bottom:4px">${c.sector}</div><div style="font-size:11px;color:var(--text2)">${c.country}</div></div>
+  </div>`;
+});
+
+const geos = [
+  {flag:'🇵🇱',name:'Poland',status:'Core market',note:'HQ Wrocław. Dominant position. mObywatel integration. ZPF member. Defence catalogue. Bank BPS, Bank Polski clients. Hosts Digital ID Forum.',bg:'#E6F1FB',tc:'#0C447C'},
+  {flag:'🇩🇪',name:'Germany',status:'Core market',note:'IDENTT GmbH (Hamburg, 1999). IDENTT Knowledge banknote/ID DB originally built for German compliance. Long-standing DACH presence.',bg:'#E6F1FB',tc:'#0C447C'},
+  {flag:'🇨🇭',name:'Switzerland',status:'Core market',note:'IDENTT SWISS GmbH (2009). Primary international sales & marketing entity. Holds 40 shares in Polish company.',bg:'#E6F1FB',tc:'#0C447C'},
+  {flag:'🇿🇦',name:'South Africa',status:'Active client',note:'City of Johannesburg: municipal services identity platform. First confirmed non-EU public sector win.',bg:'#EAF3DE',tc:'#27500A'},
+  {flag:'🇨🇿',name:'Czech Republic / Slovakia',status:'Likely active',note:'Fortuna Entertainment Group operates across CZ, SK, PL, HR, RO — IDV likely deployed across all markets.',bg:'#FAEEDA',tc:'#633806'},
+  {flag:'🇪🇺',name:'Other CEE (6–7 more)',status:'Claimed',note:'Company states 12 countries total. Likely includes HU, RO, AT, and 2–3 others in the DACH-CEE corridor.',bg:'#F5F4F0',tc:'#5F5E5A'},
+];
+const gc = document.getElementById('geo-cards');
+geos.forEach(g => {
+  gc.innerHTML += `<div class="card" style="display:flex;gap:12px;align-items:flex-start;border-left:3px solid ${g.bg};border-radius:0 12px 12px 0;margin-bottom:8px">
+    <span style="font-size:22px;flex-shrink:0;margin-top:2px">${g.flag}</span>
+    <div><div style="display:flex;align-items:center;gap:8px;margin-bottom:3px"><span style="font-size:13px;font-weight:500">${g.name}</span><span class="pill" style="background:${g.bg};color:${g.tc}">${g.status}</span></div><div style="font-size:12px;color:var(--text2)">${g.note}</div></div>
+  </div>`;
+});
+
+const phases = [
+  {period:'Now — Q4 2026',label:'Fix the foundations',color:'#FCEBEB',tc:'#791F1F',border:'#E24B4A',cost:'~€0–80K',tag:'organic',tagBg:'#E6F1FB',tagTc:'#0C447C',items:[
+    ['G2 listing + 15 client reviews','3–6 months · near zero cost · removes hard blocker in enterprise procurement'],
+    ['English blog — 4–6 posts/month','eIDAS 2.0 guides, CEE compliance, deepfake trend content · 1 content hire or agency'],
+    ['Monthly webinar programme','1 person or agency · ~€40–60K/yr · reuse recordings for YouTube'],
+    ['YouTube channel','Repurpose webinar recordings and product demos · marginal cost'],
+    ['KuppingerCole analyst briefing','Relationship, no briefing fee · begin 12–18 month runway to first mention'],
+  ]},
+  {period:'Q1 2027',label:'Launch paid channels',color:'#FAEEDA',tc:'#633806',border:'#BA7517',cost:'€8–15K/month',tag:'ads start',tagBg:'#EAF3DE',tagTc:'#27500A',items:[
+    ['LinkedIn Ads — thought leadership','Target: CCO, VP Risk, Head of KYC, CTO · Geos: DACH, Nordics, Benelux · Budget: €5–10K/month · Run content ads not demo ads'],
+    ['Google Search Ads — high-intent keywords','"identity verification banking Europe", "KYC onboarding solution", "eIDAS 2.0 compliance IDV" · €3–5K/month'],
+    ['Retargeting — warm traffic','Anyone visiting identt.pl gets retargeted with webinar invite or report download · €1–2K/month · highest ROI'],
+    ['Do NOT spend on','Display/banner · Twitter/X ads · Facebook/Instagram · Trade publication banner ads'],
+  ]},
+  {period:'2027 — full year',label:'Build authority',color:'#EEEDFE',tc:'#3C3489',border:'#7F77DD',cost:'€400–600K total',tag:'organic + ads',tagBg:'#EEEDFE',tagTc:'#3C3489',items:[
+    ['Owned podcast — 2 episodes/month','Use Digital ID Forum speaker network as guest pipeline · production €30–50K/yr · Apple + Spotify'],
+    ['Annual CEE IDV market report','First-ever CEE-focused IDV/biometrics report · €20–40K · generates inbound for 12+ months'],
+    ['X/Twitter activation','Regulatory commentary + fraud trend content · marginal cost if content team already in place'],
+    ['Scale ads based on conversion data','By mid-2027 enough data to know which markets and messages convert'],
+    ['First KuppingerCole mention','Realistic if briefings started Q4 2026'],
+  ]},
+  {period:'2028–2030',label:'Market read & analyst visibility',color:'#EAF3DE',tc:'#27500A',border:'#639922',cost:'€600–900K/yr',tag:'scale',tagBg:'#EAF3DE',tagTc:'#27500A',items:[
+    ['KuppingerCole Market Compass inclusion','Realistic by 2028 · meaningful for mid-market enterprise buyers'],
+    ['Gartner/Forrester on radar','Active engagement from 2026 puts IDENTT on radar by 2028 · inclusion realistic 2029–2030'],
+    ['LinkedIn 10–20K followers','Achievable with consistent English posting + ad amplification by 2028'],
+    ['Non-CEE inbound pipeline','Qualified inbound from Germany, Netherlands, Nordics realistic by end of 2027 with ads'],
+    ['Channel parity with IDnow','Achievable by 2027–2028 (organic + ads) vs. 2029–2030 (organic only)'],
+    ['Channel parity with Veriff/Sumsub','Organic + ads: 2029–2030 · Organic only: 2031–2032'],
+  ]},
+];
+const phEl = document.getElementById('phases');
+phases.forEach(p => {
+  phEl.innerHTML += `<div class="phase" style="background:${p.color};border:.5px solid ${p.border}">
+    <div class="phase-header">
+      <div><div class="phase-period" style="color:${p.tc}">${p.period}</div><div class="phase-title" style="color:${p.tc}">${p.label}</div></div>
+      <div style="display:flex;gap:6px;flex-shrink:0">
+        <span class="pill" style="background:${p.tagBg};color:${p.tagTc}">${p.tag}</span>
+        <span class="pill" style="background:white;color:${p.tc};border:.5px solid ${p.border}">${p.cost}</span>
+      </div>
+    </div>
+    ${p.items.map(([t,d])=>`<div class="phase-item"><span class="phase-item-arrow" style="color:${p.tc}">→</span><div><strong style="color:${p.tc}">${t}:</strong> <span style="color:var(--text2)">${d}</span></div></div>`).join('')}
+  </div>`;
+});
+
+const recsData = [
+  {n:'1. Lead with the compliance deadline — create urgency',body:"eIDAS 2.0 / EUDI Wallet deadlines (Dec 2026 / Dec 2027) are time-boxed buying triggers. IDENTT's QSCert eIDAS certification is a concrete differentiator.",color:'blue'},
+  {n:'2. Own CEE banking with mObywatel as a moat',body:'No other IDV vendor has native mObywatel integration. Use Bank BPS and Bank Polski case studies aggressively. Then expand into CZ, SK, HU, RO via the Fortuna reference.',color:'blue'},
+  {n:'3. Use Digital ID Forum as a demand-gen machine',body:'Formalise it as a lead capture and ABM event — VIP dinners, tracked engagement, post-event follow-up sequences targeting the 50+ speakers and decision-makers who attend.',color:'purple'},
+  {n:'4. The defence catalogue listing = enterprise trust badge',body:'Use it in every piece of sales collateral for public sector, government, and high-security fintech. Signals sovereign-grade reliability Veriff and iDenfy cannot match.',color:'green'},
+  {n:'5. Target crypto & gambling as fast-moving, under-served segments',body:'Jumio starts at $50K+/yr — overpriced for mid-market gaming operators. IDENTT can win on regulatory fit + price. Crypto exchanges under MiCA pressure need IDV urgently.',color:'green'},
+  {n:'6. Use IDENTT SWISS as the Western Europe face',body:'Swiss brand credibility reduces perception bias when approaching German, French, or UK financial institutions. All Western EU and UK marketing should lead with the Swiss entity.',color:'blue'},
+  {n:'7. Fill the content gap — publish regulatory intelligence',body:"IDENTT's English blog is underdeveloped. High-ROI content: 'CEE Banking KYC Compliance Guide 2027', 'How eIDAS 2.0 Changes Onboarding for Polish Banks', 'Deepfake Fraud Report'.",color:'purple'},
+  {n:'8. Analyst relations — unlock the enterprise procurement filter',body:'Engaging Gartner, Forrester, KuppingerCole is a 12–18 month investment but unlocks a whole tier of procurement processes currently inaccessible.',color:'amber'},
+];
+const rcColors = {blue:{bg:'#E6F1FB',tc:'#0C447C',border:'#378ADD'},green:{bg:'#EAF3DE',tc:'#27500A',border:'#639922'},purple:{bg:'#EEEDFE',tc:'#3C3489',border:'#7F77DD'},amber:{bg:'#FAEEDA',tc:'#633806',border:'#BA7517'}};
+const recsEl = document.getElementById('recs');
+recsData.forEach(r => {
+  const c = rcColors[r.color];
+  recsEl.innerHTML += `<div style="background:${c.bg};border:.5px solid ${c.border};border-radius:10px;padding:10px 14px;margin-bottom:8px">
+    <div style="font-size:12px;font-weight:500;color:${c.tc};margin-bottom:5px">${r.n}</div>
+    <div style="font-size:12px;color:var(--text2);line-height:1.6">${r.body}</div>
+  </div>`;
+});
+
+// ══════════════════════════════════════════ CHANNEL MATRIX ══
+const channelDefs = [
+  {key:'linkedin',label:'LinkedIn'},{key:'twitter',label:'X/Twitter'},{key:'youtube',label:'YouTube'},
+  {key:'podcast',label:'Podcast'},{key:'blog',label:'Blog/SEO'},{key:'g2',label:'G2'},
+  {key:'gartner',label:'Analyst'},{key:'events',label:'Events'},{key:'webinars',label:'Webinars'},
+  {key:'facebook',label:'Facebook'},{key:'instagram',label:'Instagram'},
+];
+const channelVendors = [
+  {name:'Jumio',tier:'Enterprise',origin:'🇺🇸',ch:{linkedin:{a:true,c:'high',n:'51,962 followers. Most active channel — daily posts, event promotion, webinars, thought leadership.'},twitter:{a:true,c:'high',n:'Active on X/Twitter. Regular posting confirmed.'},youtube:{a:true,c:'high',n:'YouTube channel active. Webinar replays, product demos.'},podcast:{a:true,c:'high',n:'CyberBytes: The Podcast — on Apple Podcasts & Spotify.'},blog:{a:true,c:'high',n:'Extensive blog & research reports — KYC guides, fraud trends, industry reports.'},g2:{a:true,c:'high',n:'Listed on G2. Strong review presence.'},gartner:{a:true,c:'high',n:'Named in Gartner Magic Quadrant 2025 for Identity Verification.'},events:{a:true,c:'high',n:'ICE London, FinTech Connect, NY FinTech Week, Barclays Financials — heavy event presence.'},webinars:{a:true,c:'high',n:'Regular webinars with analyst partners (Aite-Novarica etc.).'},facebook:{a:'?',c:'low',n:'Presence unconfirmed.'},instagram:{a:'?',c:'low',n:'Presence unconfirmed.'}}},
+  {name:'Onfido (Entrust)',tier:'Enterprise',origin:'🇬🇧',ch:{linkedin:{a:true,c:'high',n:'Active LinkedIn under Entrust brand since April 2024 acquisition.'},twitter:{a:true,c:'high',n:'Active on X/Twitter.'},youtube:{a:true,c:'high',n:'YouTube channel with demos and webinar content.'},podcast:{a:'?',c:'low',n:'No dedicated Onfido/Entrust IDV podcast confirmed.'},blog:{a:true,c:'high',n:'Developer blog, regulatory guides, compliance content — well-established.'},g2:{a:true,c:'high',n:'G2 Leader badge 5 consecutive quarters — #1 in IDV category grid, Summer 2024.'},gartner:{a:true,c:'high',n:'Gartner Magic Quadrant 2025 — named as leader.'},events:{a:true,c:'high',n:'Global conference presence: Money20/20, FinTech Connect, Web Summit.'},webinars:{a:true,c:'high',n:'Frequent webinars, often with analyst or partner co-hosting.'},facebook:{a:'?',c:'low',n:'Presence unconfirmed.'},instagram:{a:'?',c:'low',n:'Presence unconfirmed.'}}},
+  {name:'Veriff',tier:'Growth',origin:'🇪🇪',ch:{linkedin:{a:true,c:'high',n:'46,658 followers. Very active — fraud reports, regulatory content, product news, weekly cadence.'},twitter:{a:true,c:'high',n:'Active on X/Twitter.'},youtube:{a:true,c:'high',n:'YouTube channel active. Hosts podcast video episodes.'},podcast:{a:true,c:'high',n:'Veriff Voices — biweekly on Apple Podcasts & Spotify.'},blog:{a:true,c:'high',n:'High-volume blog: Identity Fraud Report (annual), regulatory guides, comparison content.'},g2:{a:true,c:'high',n:'G2 Leader in Identity Verification, Autumn 2025 Grid.'},gartner:{a:'?',c:'low',n:'Not confirmed in Gartner MQ separately from Jumio/Entrust/Sumsub.'},events:{a:true,c:'high',n:'Heavy global event presence — SiGMA, Money20/20, iFX EXPO, fintech summits.'},webinars:{a:true,c:'high',n:'Regular webinars; also uses X Spaces for live discussions.'},facebook:{a:true,c:'high',n:'Facebook presence confirmed (listed in footer).'},instagram:{a:true,c:'high',n:'Instagram presence confirmed (listed in footer).'}}},
+  {name:'Sumsub',tier:'Growth',origin:'🇬🇧',ch:{linkedin:{a:true,c:'high',n:'45,447 followers. Very active — fraud reports, event promos, regulatory updates.'},twitter:{a:true,c:'high',n:'Active on X (@sumsubcom). Uses X Spaces for live discussions.'},youtube:{a:true,c:'high',n:'YouTube channel active — webinar replays, product explainers.'},podcast:{a:'?',c:'low',n:'No dedicated Sumsub podcast confirmed, but participates in external podcasts and X Spaces.'},blog:{a:true,c:'high',n:'Extensive blog: KYC/AML guides, Identity Fraud Report 2025-2026. Strong SEO play.'},g2:{a:true,c:'high',n:'G2 listed. Ranked #1 Best KYC Solution at SiGMA World 2025.'},gartner:{a:true,c:'high',n:'Named in Gartner Magic Quadrant 2025 for Identity Verification.'},events:{a:true,c:'high',n:'74 conferences in 2022 alone. SiGMA, Singapore FinTech Festival, TOKEN2049, Money20/20 Asia.'},webinars:{a:true,c:'high',n:'Regular webinars listed on sumsub.com/blog/webinars.'},facebook:{a:true,c:'high',n:'Facebook presence confirmed (listed in footer).'},instagram:{a:true,c:'high',n:'Instagram presence confirmed (listed in footer).'}}},
+  {name:'IDnow',tier:'Regional',origin:'🇩🇪',ch:{linkedin:{a:true,c:'high',n:'18,424 followers. Active — event updates, regulatory content (eIDAS/BaFin), product launches.'},twitter:{a:'?',c:'low',n:'Presence unconfirmed.'},youtube:{a:'?',c:'low',n:'Likely exists given company size, but not confirmed.'},podcast:{a:true,c:'high',n:"Mila's Regulatory Radar published regularly by IDnow's team."},blog:{a:true,c:'high',n:'Strong regulatory-focused blog: eIDAS 2.0 updates, BaFin compliance, ETSI 119 461.'},g2:{a:true,c:'high',n:'G2 profile listed (confirmed by multiple buyer comparison sources 2026).'},gartner:{a:'?',c:'low',n:'Not confirmed in recent Gartner MQ listings.'},events:{a:true,c:'high',n:'Autonomy Mobility World Expo, European fintech events, DACH financial services conferences.'},webinars:{a:'?',c:'low',n:'Likely but not directly confirmed.'},facebook:{a:'?',c:'low',n:'Presence unconfirmed.'},instagram:{a:'?',c:'low',n:'Presence unconfirmed.'}}},
+  {name:'iDenfy',tier:'Regional',origin:'🇱🇹',ch:{linkedin:{a:true,c:'high',n:'Active LinkedIn. Publishes competitor comparison content (heavy SEO strategy).'},twitter:{a:'?',c:'low',n:'Presence unconfirmed.'},youtube:{a:'?',c:'low',n:'Presence unconfirmed.'},podcast:{a:'?',c:'low',n:'Not confirmed.'},blog:{a:true,c:'high',n:'Very active blog — publishes best IDV providers lists, competitor comparisons, industry guides.'},g2:{a:true,c:'high',n:'G2 listed. Frequently cited as top alternative to Jumio, Sumsub, Onfido in G2 comparisons.'},gartner:{a:'?',c:'low',n:'Not confirmed.'},events:{a:'?',c:'low',n:'Likely attends CEE fintech events but not confirmed.'},webinars:{a:'?',c:'low',n:'Not confirmed.'},facebook:{a:'?',c:'low',n:'Presence unconfirmed.'},instagram:{a:'?',c:'low',n:'Presence unconfirmed.'}}},
+  {name:'Shufti Pro',tier:'Growth',origin:'🇬🇧',ch:{linkedin:{a:true,c:'high',n:'Active LinkedIn. Regional VPs post regularly (EU VP Max Irwin confirmed posting 2026).'},twitter:{a:'?',c:'low',n:'Presence likely but not confirmed.'},youtube:{a:'?',c:'low',n:'Presence likely but not confirmed.'},podcast:{a:true,c:'high',n:'Guest contributors on Biometric Update and industry publications.'},blog:{a:true,c:'high',n:'Active blog with IDV guides, competitor comparisons, regulatory content.'},g2:{a:true,c:'high',n:'G2 listed. Ranked in buyer shortlists 2026.'},gartner:{a:true,c:'high',n:'KuppingerCole Market Positioning and Commercial Assessment published 2025.'},events:{a:true,c:'high',n:"Multiple FinTech awards — Best Fintech AI Solution, Best Client Onboarding (FinTech Awards MEA 2023)."},webinars:{a:'?',c:'low',n:'Not directly confirmed.'},facebook:{a:'?',c:'low',n:'Presence unconfirmed.'},instagram:{a:'?',c:'low',n:'Presence unconfirmed.'}}},
+  {name:'Fourthline',tier:'Regional',origin:'🇳🇱',ch:{linkedin:{a:true,c:'high',n:'LinkedIn presence confirmed.'},twitter:{a:'?',c:'low',n:'Presence unconfirmed.'},youtube:{a:'?',c:'low',n:'Presence unconfirmed.'},podcast:{a:'?',c:'low',n:'Not confirmed.'},blog:{a:'?',c:'low',n:'Likely has a blog but not confirmed as active content strategy.'},g2:{a:'?',c:'low',n:'Not confirmed in G2 shortlists reviewed.'},gartner:{a:'?',c:'low',n:'Not confirmed.'},events:{a:'?',c:'low',n:'Likely EU fintech events but not confirmed.'},webinars:{a:'?',c:'low',n:'Not confirmed.'},facebook:{a:'?',c:'low',n:'Presence unconfirmed.'},instagram:{a:'?',c:'low',n:'Presence unconfirmed.'}}},
+  {name:'Ondato',tier:'Regional',origin:'🇱🇹',ch:{linkedin:{a:true,c:'high',n:'Active LinkedIn — publishes IDV comparison content.'},twitter:{a:'?',c:'low',n:'Presence unconfirmed.'},youtube:{a:'?',c:'low',n:'Presence unconfirmed.'},podcast:{a:'?',c:'low',n:'Not confirmed.'},blog:{a:true,c:'high',n:'Active blog at ondato.com — publishes competitor comparisons and IDV guides.'},g2:{a:'?',c:'low',n:'Not confirmed in major G2 shortlists reviewed.'},gartner:{a:'?',c:'low',n:'Not confirmed.'},events:{a:'?',c:'low',n:'Likely CEE fintech events.'},webinars:{a:'?',c:'low',n:'Not confirmed.'},facebook:{a:'?',c:'low',n:'Presence unconfirmed.'},instagram:{a:'?',c:'low',n:'Presence unconfirmed.'}}},
+  {name:'IDENTT',tier:'Regional',origin:'🇵🇱',identt:true,ch:{linkedin:{a:true,c:'high',n:'LinkedIn page exists and is active in Polish. Limited English content. Follower count significantly below all main competitors.'},twitter:{a:false,c:'high',n:'No confirmed X/Twitter presence. A gap vs. all major competitors.'},youtube:{a:false,c:'high',n:'No confirmed YouTube channel. Webinar/demo video content not distributed on this platform.'},podcast:{a:false,c:'high',n:'No podcast. Veriff (Veriff Voices) and Jumio (CyberBytes) own this channel in the IDV space.'},blog:{a:true,c:'high',n:'Blog exists on identt.pl but is underdeveloped in English. Polish-language content dominates.'},g2:{a:false,c:'high',n:'Not listed on G2. Critical procurement gap — enterprise buyers use G2 as a shortlist tool.'},gartner:{a:false,c:'high',n:'Not in Gartner Magic Quadrant or Forrester Wave. Not in KuppingerCole assessments.'},events:{a:true,c:'high',n:'Attends international AI & cybersecurity trade fairs (EU-funded). Organises Digital ID Forum (Wrocław, May 2026).'},webinars:{a:false,c:'high',n:'No confirmed webinar programme. Competitors run regular webinars as a lead-gen channel.'},facebook:{a:'?',c:'low',n:'Presence unconfirmed.'},instagram:{a:'?',c:'low',n:'Presence unconfirmed.'}}},
+];
+
+function cellClass(ch, isIdentt) {
+  if (ch.a === false && isIdentt) return {cls:'cell-gap', icon:'✗'};
+  if (ch.a === true && ch.c==='high') return {cls:'cell-yes', icon:'✓'};
+  if (ch.a === true && ch.c==='low')  return {cls:'cell-maybe', icon:'~'};
+  return {cls:'cell-no', icon:'?'};
+}
+
+const TIER_PILL = {Enterprise:'amber',Growth:'blue',Regional:'green'};
+
+function buildMatrix(tableId, vendors, colDefs, keyFn, tooltipId, titleId, bodyId, confId) {
+  const tbl = document.getElementById(tableId);
+  // header
+  let hdr = `<colgroup><col style="width:110px">${colDefs.map(()=>'<col style="width:48px">').join('')}</colgroup><thead><tr><th class="name-col">Vendor</th>`;
+  colDefs.forEach(cd => { hdr += `<th>${cd.label}</th>`; });
+  hdr += '</tr></thead><tbody>';
+  tbl.innerHTML = hdr;
+
+  const tbody = document.createElement('tbody');
+  vendors.forEach((v, ri) => {
+    const tr = document.createElement('tr');
+    if (v.identt) tr.classList.add('identt-row');
+    // name cell
+    const td0 = document.createElement('td');
+    td0.className = 'name-col';
+    td0.innerHTML = `<div style="font-size:11px;font-weight:500;color:${v.identt?'#633806':'var(--text)'}">${v.origin} ${v.name}</div><div style="margin-top:3px"><span class="pill ${TIER_PILL[v.tier]}" style="font-size:8px">${v.tier}</span></div>`;
+    tr.appendChild(td0);
+    // data cells
+    colDefs.forEach((cd, ci) => {
+      const item = keyFn(v, cd.key);
+      const s = cellClass(item, !!v.identt);
+      const td = document.createElement('td');
+      td.innerHTML = `<span class="cell-chip ${s.cls}">${s.icon}</span>`;
+      td.addEventListener('click', () => {
+        document.getElementById(titleId).textContent = `${v.name} — ${cd.label}`;
+        document.getElementById(bodyId).textContent = item.n;
+        const conf = document.getElementById(confId);
+        if (item.c === 'high') { conf.style.background='#EAF3DE'; conf.style.color='#27500A'; conf.textContent='✓ High confidence — directly verified'; }
+        else { conf.style.background='#FAEEDA'; conf.style.color='#633806'; conf.textContent='~ Lower confidence — unconfirmed'; }
+        document.getElementById(tooltipId).style.display = 'block';
+      });
+      tr.appendChild(td);
+    });
+    tbody.appendChild(tr);
+  });
+  tbl.appendChild(tbody);
+}
+
+buildMatrix('channelMatrix', channelVendors, channelDefs, (v,k)=>v.ch[k], 'tooltip-box','tt-title','tt-body','tt-conf');
+
+// ══════════════════════════════════════════ PRODUCT MATRIX ══
+const productDefs = [
+  {key:'doc_verify',label:'Doc verify'},{key:'biometric',label:'Face biometrics'},{key:'liveness',label:'Liveness'},
+  {key:'nfc',label:'NFC/eID'},{key:'video_kyc',label:'Video KYC'},{key:'aml_screening',label:'AML/PEP'},
+  {key:'kyb',label:'KYB'},{key:'tx_monitoring',label:'Tx monitoring'},{key:'adverse_media',label:'Adverse media'},
+  {key:'proof_address',label:'Proof of addr.'},{key:'esign',label:'eSign (QES)'},{key:'orchestration',label:'Orchestration'},
+  {key:'ongoing_kyc',label:'Ongoing KYC'},{key:'fraud_signals',label:'Fraud signals'},{key:'banknote_db',label:'Banknote DB'},
+];
+
+function pCellClass(p, isIdentt) {
+  if (p.a === false && isIdentt) return {cls:'cell-gap',   icon:'✗'};
+  if (p.a === false)             return {cls:'cell-no',    icon:'—'};
+  if (p.a === true && p.c==='high') return {cls:'cell-yes',  icon:'✓'};
+  if (p.a === true && p.c==='low')  return {cls:'cell-maybe',icon:'~'};
+  if (p.a === '?' && isIdentt)  return {cls:'cell-maybe', icon:'?'};
+  return {cls:'cell-no', icon:'?'};
+}
+
+const productVendors = [
+  {name:'IDENTT',origin:'🇵🇱',tier:'Regional',identt:true,pr:{
+    doc_verify:{a:true,c:'high',n:'IDENTT Vision + IDENTT Knowledge DB: OCR + AI verification of 194-country ID docs.'},
+    biometric:{a:true,c:'high',n:'Facelab: proprietary face-match biometrics. Handles appearance changes over time.'},
+    liveness:{a:true,c:'high',n:'EU co-funded Biometric Liveness Verification System (2023). Proprietary AI — no third-party dependency.'},
+    nfc:{a:true,c:'high',n:'IDENTT App (Jan 2026): NFC chip reading for biometric passports and eID cards. Also supports mObywatel.'},
+    video_kyc:{a:true,c:'high',n:'IDENTT Video: live video consultant session + real-time document check. Human-in-the-loop verification.'},
+    aml_screening:{a:true,c:'high',n:'Sanctions & PEP screening listed as a product on identt.pl.'},
+    kyb:{a:'?',c:'low',n:'Not confirmed as a standalone product on identt.pl.'},
+    tx_monitoring:{a:false,c:'high',n:'Not offered. IDENTT is an identity proofing specialist.'},
+    adverse_media:{a:'?',c:'low',n:'Not explicitly listed on identt.pl.'},
+    proof_address:{a:true,c:'high',n:'Proof of Address listed as a product on identt.pl.'},
+    esign:{a:'?',c:'low',n:'Not listed on identt.pl. No e-signature product confirmed.'},
+    orchestration:{a:'?',c:'low',n:'No no-code workflow builder confirmed. Integration is API/SDK based.'},
+    ongoing_kyc:{a:'?',c:'low',n:'Not explicitly listed. Re-verification via Facelab is possible but perpetual KYC not confirmed.'},
+    fraud_signals:{a:true,c:'high',n:'Verification Engine includes risk scoring. Anti-spoofing signals confirmed.'},
+    banknote_db:{a:true,c:'high',n:'IDENTT Knowledge: unique dual-DB covering identity documents AND banknotes across 194 countries. No competitor offers this.'},
+  }},
+  {name:'Jumio',origin:'🇺🇸',tier:'Enterprise',pr:{doc_verify:{a:true,c:'high',n:'5,000+ ID document types, 200+ countries. AI-powered OCR + ML document forensics.'},biometric:{a:true,c:'high',n:'Selfie-based face matching vs. ID photo. Biometric Authentication for returning users. 1B+ transactions processed.'},liveness:{a:true,c:'high',n:'Jumio Liveness Premium (Gold, 2026 Cybersecurity Excellence Awards). ISO/IEC 30107-3 Level 2 PAD certified.'},nfc:{a:true,c:'high',n:'NFC Verification: barcode and NFC scanning of chip-enabled ID documents.'},video_kyc:{a:true,c:'high',n:'Video KYC listed as a product.'},aml_screening:{a:true,c:'high',n:'AI-powered AML screening against OFAC, EU, UN, HMT sanctions + PEP lists + adverse media.'},kyb:{a:true,c:'high',n:'KYB: business entity verification, UBO checks, corporate structure verification.'},tx_monitoring:{a:true,c:'high',n:'Know Your Transaction (KYT) + Payment Fraud Prevention. Jumio Identity Graph.'},adverse_media:{a:true,c:'high',n:'Adverse Media Screening listed as a product.'},proof_address:{a:true,c:'high',n:'Address Verification listed as a product.'},esign:{a:true,c:'high',n:'eSign listed as a product.'},orchestration:{a:true,c:'high',n:'No-code orchestration confirmed — hundreds of data sources orchestrated via Jumio Platform.'},ongoing_kyc:{a:true,c:'high',n:'Perpetual KYC / ongoing monitoring listed as product.'},fraud_signals:{a:true,c:'high',n:'360 Fraud Analytics: device risk, IP, geolocation, velocity, behavioural signals.'},banknote_db:{a:false,c:'high',n:'No banknote database. Jumio is purely digital identity.'}}},
+  {name:'Onfido (Entrust)',origin:'🇬🇧',tier:'Enterprise',pr:{doc_verify:{a:true,c:'high',n:'2,500+ document types, 195 countries. Atlas AI proprietary model trained 10+ years.'},biometric:{a:true,c:'high',n:'Selfie-based face matching (1:1) with active and passive liveness. Fair AI (bias testing documented).'},liveness:{a:true,c:'high',n:'Active and passive liveness. Motion facial biometric technology. iBeta certified.'},nfc:{a:true,c:'high',n:'NFC support on compatible documents confirmed (2,500+ doc types).'},video_kyc:{a:'?',c:'low',n:'Video KYC not prominently listed. Entrust IDV is primarily automated AI-first.'},aml_screening:{a:true,c:'high',n:'AML screening: PEP, sanctions (OFAC, EU, HMT, UN). Listed as product.'},kyb:{a:'?',c:'low',n:'Primarily focused on KYC identity verification rather than deep KYB.'},tx_monitoring:{a:'?',c:'low',n:'Transaction monitoring not confirmed as a standalone product.'},adverse_media:{a:true,c:'high',n:'Adverse media screening confirmed as part of AML suite.'},proof_address:{a:'?',c:'low',n:'Not explicitly listed as a product.'},esign:{a:'?',c:'low',n:"Entrust has broader PKI/certificate products but Onfido IDV-specific eSign not confirmed."},orchestration:{a:true,c:'high',n:'Workflow Studio: no-code orchestration — most sophisticated in the market per analyst reviews.'},ongoing_kyc:{a:true,c:'high',n:'Ongoing monitoring and re-verification confirmed.'},fraud_signals:{a:true,c:'high',n:'Passive fraud signals: device integrity, IP reputation, geolocation, velocity checks.'},banknote_db:{a:false,c:'high',n:'No banknote database.'}}},
+  {name:'Veriff',origin:'🇪🇪',tier:'Growth',pr:{doc_verify:{a:true,c:'high',n:'12,500+ identity document types from 230+ countries. AI-powered OCR + document forensics.'},biometric:{a:true,c:'high',n:'FaceCheck: 1:1 face match vs. ID. Selfie-to-selfie authentication for returning users.'},liveness:{a:true,c:'high',n:'FaceCheck Liveness: passive liveness. ISO/IEC 30107-3 Level 1 and 2 PAD certified by iBeta.'},nfc:{a:'?',c:'low',n:'NFC not explicitly listed as a Veriff product feature.'},video_kyc:{a:true,c:'high',n:'Fully recorded and manually reviewed session option available.'},aml_screening:{a:true,c:'high',n:'AML Screening: real-time checks against OFAC, UN, HMT, EU, DFAT + 150M adverse media sources + PEP lists.'},kyb:{a:true,c:'high',n:'KYB: Business Registry Verification. USA SSN and EIN check available.'},tx_monitoring:{a:'?',c:'low',n:'Transaction monitoring not listed as a Veriff product.'},adverse_media:{a:true,c:'high',n:'Adverse media screening against 150 million sources.'},proof_address:{a:true,c:'high',n:'Proof of Address listed as a product on veriff.com.'},esign:{a:false,c:'high',n:'No e-signature product. Veriff is identity verification focused.'},orchestration:{a:'?',c:'low',n:'No dedicated no-code orchestration studio confirmed.'},ongoing_kyc:{a:true,c:'high',n:'Ongoing KYC screening confirmed: continuous PEP, sanctions, and adverse media monitoring.'},fraud_signals:{a:true,c:'high',n:'DeviceCheck: 1,000+ device analytics signals. Behavioral signals, device fingerprinting.'},banknote_db:{a:false,c:'high',n:'No banknote database.'}}},
+  {name:'Sumsub',origin:'🇬🇧',tier:'Growth',pr:{doc_verify:{a:true,c:'high',n:'14,000+ ID types from 220+ countries. AI-powered document verification + OCR.'},biometric:{a:true,c:'high',n:'Selfie-based face match vs. ID. Biometric authentication for returning users. Deepfake detection.'},liveness:{a:true,c:'high',n:'Liveness detection included in KYC flows. Deepfake checks confirmed.'},nfc:{a:true,c:'high',n:'NFC reads confirmed in financial services onboarding flow.'},video_kyc:{a:true,c:'high',n:'Video KYC: live video verification option. Hybrid model available.'},aml_screening:{a:true,c:'high',n:'AML Screening: PEP, sanctions, adverse media. OFAC, UN, EU, FATF-aligned.'},kyb:{a:true,c:'high',n:'KYB: business registry verification, UBO checks, director verification, corporate structure.'},tx_monitoring:{a:true,c:'high',n:'Transaction Monitoring: real-time, fiat + crypto. Chainalysis, Elliptic, TRM Labs integrations.'},adverse_media:{a:true,c:'high',n:'Adverse media screening included in AML Screening product.'},proof_address:{a:true,c:'high',n:'Proof of address verification available as part of KYC flows.'},esign:{a:false,c:'high',n:'No e-signature product listed.'},orchestration:{a:true,c:'high',n:'No-code workflow builder: customizable KYC journeys with triggers, conditions, multi-country logic.'},ongoing_kyc:{a:true,c:'high',n:'Ongoing/perpetual KYC: real-time risk score updates based on transaction patterns.'},fraud_signals:{a:true,c:'high',n:'Device intelligence, behavioral analytics, IP signals. Identity + device + behavior + payment signals combined.'},banknote_db:{a:false,c:'high',n:'No banknote database.'}}},
+  {name:'IDnow',origin:'🇩🇪',tier:'Regional',pr:{doc_verify:{a:true,c:'high',n:'AutoIdent: AI-powered automated document verification. IDCheck.io: instant AI-based ID verification.'},biometric:{a:true,c:'high',n:'Face matching included in AutoIdent and VideoIdent flows.'},liveness:{a:true,c:'high',n:'Liveness detection included in AutoIdent. Updated liveness components confirmed in release notes (2024/2025).'},nfc:{a:true,c:'high',n:'IDnow eID: NFC-based solution for German electronic ID card. eID eSign (2024): NFC chip readout for QES.'},video_kyc:{a:true,c:'high',n:'VideoIdent: core product — digital verification via video-chat. BaFin17 compliant.'},aml_screening:{a:true,c:'high',n:'AML-compliant across all products. AutoIdent AML and GwG variants. PEP/sanctions checking included.'},kyb:{a:'?',c:'low',n:'Not explicitly listed as a standalone product.'},tx_monitoring:{a:false,c:'high',n:'Not offered. IDnow is an identity proofing and e-signing specialist.'},adverse_media:{a:'?',c:'low',n:'Not explicitly listed.'},proof_address:{a:'?',c:'low',n:'Not explicitly listed as a product on idnow.io.'},esign:{a:true,c:'high',n:'eSign: QES via partner DocuSign. eIDAS compliant. InstantSign (2024): reusable identity for signing.'},orchestration:{a:true,c:'high',n:'IDnow Trust Platform: orchestration layer connecting AutoIdent, VideoIdent, eID, eSign products.'},ongoing_kyc:{a:'?',c:'low',n:'Re-verification mentioned but perpetual/ongoing KYC not listed as a standalone product.'},fraud_signals:{a:true,c:'high',n:'AI and ML-based fraud detection in AutoIdent. Ident Specialists trained for fraud spotting in VideoIdent.'},banknote_db:{a:false,c:'high',n:'No banknote database.'}}},
+  {name:'iDenfy',origin:'🇱🇹',tier:'Regional',pr:{doc_verify:{a:true,c:'high',n:'AI-driven document verification, 200+ countries.'},biometric:{a:true,c:'high',n:'Facial recognition technology and advanced biometric algorithms. 1:1 face match vs. document photo.'},liveness:{a:true,c:'high',n:'Liveness detection: AI-based anti-spoofing. Blocks photo and video replay attacks.'},nfc:{a:true,c:'high',n:'NFC verification listed as a product on idenfy.com.'},video_kyc:{a:'?',c:'low',n:'Not explicitly confirmed as a product.'},aml_screening:{a:true,c:'high',n:'AML screening: 1,700+ watchlists. PEP screening, sanctions lists.'},kyb:{a:true,c:'high',n:'KYB (Know Your Business) listed as a product on idenfy.com.'},tx_monitoring:{a:false,c:'high',n:'Transaction monitoring not listed as an iDenfy product.'},adverse_media:{a:'?',c:'low',n:'Not explicitly confirmed as a standalone feature.'},proof_address:{a:'?',c:'low',n:'Not explicitly confirmed as a product on idenfy.com.'},esign:{a:false,c:'high',n:'No e-signature product listed on idenfy.com.'},orchestration:{a:'?',c:'low',n:'No no-code orchestration studio confirmed.'},ongoing_kyc:{a:true,c:'high',n:'Ongoing KYC and AML monitoring listed as a product on idenfy.com.'},fraud_signals:{a:true,c:'high',n:'Fraud scoring product listed. Proxy detection included.'},banknote_db:{a:false,c:'high',n:'No banknote database.'}}},
+  {name:'Shufti Pro',origin:'🇬🇧',tier:'Growth',pr:{doc_verify:{a:true,c:'high',n:'10,000+ document types, 230+ countries, 150+ languages. AI + human intelligence hybrid.'},biometric:{a:true,c:'high',n:'Facial biometric authentication: face match vs. ID photo. 1:1 face comparison.'},liveness:{a:true,c:'high',n:'Liveness detection included in all biometric flows. Level 3 biometric PAD evaluation passed.'},nfc:{a:true,c:'high',n:'NFC verification: chip reading of eID documents.'},video_kyc:{a:true,c:'high',n:'Video KYC: live video verification with human intelligence. Touchless kiosk also available.'},aml_screening:{a:true,c:'high',n:'AML screening against 1,700+ global watchlists. PEP checks, sanctions.'},kyb:{a:true,c:'high',n:'KYB listed as a core product alongside KYC and AML.'},tx_monitoring:{a:'?',c:'low',n:'Not prominently listed as a standalone product.'},adverse_media:{a:true,c:'high',n:'Adverse media screening included in AML suite.'},proof_address:{a:'?',c:'low',n:'Not explicitly listed as a standalone product.'},esign:{a:'?',c:'low',n:'Not confirmed as a Shufti Pro product.'},orchestration:{a:'?',c:'low',n:'Modular platform — clients select checks needed. No-code orchestration studio not confirmed.'},ongoing_kyc:{a:true,c:'high',n:'Ongoing KYC and AML screening product confirmed.'},fraud_signals:{a:true,c:'high',n:'Multi-parameter risk engine: behavioral analytics, device signals, ML-based fraud scoring.'},banknote_db:{a:false,c:'high',n:'No banknote database.'}}},
+  {name:'Fourthline',origin:'🇳🇱',tier:'Regional',pr:{doc_verify:{a:true,c:'high',n:'Comprehensive document authenticity analysis. OCR with 98% AI accuracy. ING, N26, Degiro clients.'},biometric:{a:true,c:'high',n:'Selfie biometrics: 1:1 face match vs. ID. Authentication for returning users.'},liveness:{a:true,c:'high',n:'Liveness Detection included in KYC app. 98% AI accuracy. ISO/IEC 27001:2022 certified.'},nfc:{a:true,c:'high',n:'NFC chip reading confirmed in KYC mobile app.'},video_kyc:{a:'?',c:'low',n:'Not listed as a Fourthline product. Video-Ident explicitly called out as 3-4x more expensive.'},aml_screening:{a:true,c:'high',n:'AML Watchlist Screening and Ongoing Monitoring. Daily screening against PEP/sanctions lists.'},kyb:{a:'?',c:'low',n:'Not explicitly listed as a product.'},tx_monitoring:{a:false,c:'high',n:'Not offered.'},adverse_media:{a:'?',c:'low',n:'Not explicitly confirmed in Fourthline product pages.'},proof_address:{a:true,c:'high',n:'Proof of Address: Physical, Geolocation and Digital Proof of Address — all listed on fourthline.com.'},esign:{a:true,c:'high',n:'e-Signature listed as a product on fourthline.com. QES-based solutions.'},orchestration:{a:true,c:'high',n:'Modular identity platform: mix-and-match modules. Single API. Re-KYC automation.'},ongoing_kyc:{a:true,c:'high',n:'Continuous KYC: catches additional 20-30% of fraud attempts post-onboarding.'},fraud_signals:{a:true,c:'high',n:'Geolocation intelligence, device signals, proprietary fraud logic.'},banknote_db:{a:false,c:'high',n:'No banknote database.'}}},
+  {name:'Ondato',origin:'🇱🇹',tier:'Regional',pr:{doc_verify:{a:true,c:'high',n:'AI-powered identity verification and document capture/validation. 3,000+ ID document types, 230+ countries.'},biometric:{a:true,c:'high',n:'Biometric verification: face match vs. ID document.'},liveness:{a:true,c:'high',n:'Liveness detection: G2 Momentum Leader in AML software category.'},nfc:{a:'?',c:'low',n:'Not explicitly confirmed as a product on ondato.com.'},video_kyc:{a:true,c:'high',n:'Video KYC: listed as a strength by G2 reviewers. Virtual branch / remote connection.'},aml_screening:{a:true,c:'high',n:'Real-time AML screening: adverse media, sanctions and PEP screening.'},kyb:{a:true,c:'high',n:'KYB: business identity verification, company registry checks, beneficial ownership verification.'},tx_monitoring:{a:'?',c:'low',n:'Not confirmed as a standalone Ondato product.'},adverse_media:{a:true,c:'high',n:'Adverse media screening confirmed as part of AML product.'},proof_address:{a:'?',c:'low',n:'Not explicitly listed as a product.'},esign:{a:'?',c:'low',n:'Not confirmed as an Ondato product.'},orchestration:{a:true,c:'high',n:'Customizable user journeys: businesses tailor verification flows. No-code/low-code workflow configuration.'},ongoing_kyc:{a:true,c:'high',n:'Ongoing compliance automation: customer monitoring, re-verification, ongoing AML.'},fraud_signals:{a:true,c:'high',n:'AI-driven fraud detection integrated in platform.'},banknote_db:{a:false,c:'high',n:'No banknote database.'}}},
+];
+
+buildMatrix('productMatrix', productVendors, productDefs, (v,k)=>v.pr[k], 'tooltip-box2','tt2-title','tt2-body','tt2-conf');
+
+// ══════════════════════════════════════════ CHARTS ══
+const textC = '#5F5E5A', gridC = 'rgba(0,0,0,0.07)';
+
+// radar
+new Chart(document.getElementById('radarChart'), {
+  type:'radar',
+  data:{
+    labels:['Product breadth','Market presence','Mktg channels','Geographic reach','Compliance depth'],
+    datasets:[
+      {label:'IDENTT',        data:[5,2,2,4,7], borderColor:'#BA7517',backgroundColor:'rgba(186,117,23,0.15)',borderWidth:2.5,pointBackgroundColor:'#BA7517',pointRadius:4},
+      {label:'Jumio',         data:[9,9,8,9,9], borderColor:'#378ADD',backgroundColor:'rgba(55,138,221,0.05)',borderWidth:1.5,pointBackgroundColor:'#378ADD',pointRadius:3},
+      {label:'Veriff',        data:[7,7,9,7,7], borderColor:'#1D9E75',backgroundColor:'rgba(29,158,117,0.05)',borderWidth:1.5,pointBackgroundColor:'#1D9E75',pointRadius:3},
+      {label:'Sumsub',        data:[8,7,9,7,8], borderColor:'#7F77DD',backgroundColor:'rgba(127,119,221,0.05)',borderWidth:1.5,pointBackgroundColor:'#7F77DD',pointRadius:3},
+      {label:'IDnow',         data:[6,5,5,4,8], borderColor:'#888780',backgroundColor:'rgba(136,135,128,0.05)',borderWidth:1.5,pointBackgroundColor:'#888780',pointRadius:3},
+      {label:'iDenfy/Ondato', data:[5,3,2,3,5], borderColor:'#D85A30',backgroundColor:'rgba(216,90,48,0.05)',borderWidth:1.5,pointBackgroundColor:'#D85A30',pointRadius:3},
+    ]
+  },
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{r:{min:0,max:10,ticks:{stepSize:2,font:{size:9},color:textC,backdropColor:'transparent'},grid:{color:gridC},angleLines:{color:gridC},pointLabels:{font:{size:10,weight:'500'},color:textC}}}}
+});
+
+// product bar
+const prodSorted=[{v:'Jumio',s:14},{v:'Sumsub',s:13},{v:'Shufti Pro',s:11},{v:'Onfido (Entrust)',s:10},{v:'Veriff',s:10},{v:'IDnow',s:9},{v:'Ondato',s:9},{v:'iDenfy',s:8},{v:'IDENTT',s:8},{v:'Fourthline',s:8}];
+new Chart(document.getElementById('productChart'),{type:'bar',data:{labels:prodSorted.map(x=>x.v),datasets:[{data:prodSorted.map(x=>x.s),backgroundColor:prodSorted.map(x=>x.v==='IDENTT'?'#BA7517':'#378ADD'),borderWidth:0,borderRadius:3}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>` ${ctx.parsed.x}/15`}}},scales:{x:{min:0,max:15,grid:{color:gridC},ticks:{stepSize:3,font:{size:10}},border:{dash:[3,3]}},y:{grid:{display:false},ticks:{font:{size:10},color:ctx=>prodSorted[ctx.index].v==='IDENTT'?'#854F0B':textC}}}}});
+
+// channel bar
+const chSorted=[{v:'Veriff',s:9},{v:'Sumsub',s:9},{v:'Jumio',s:8},{v:'Onfido (Entrust)',s:7},{v:'IDnow',s:5},{v:'Shufti Pro',s:5},{v:'IDENTT',s:3},{v:'iDenfy',s:2},{v:'Ondato',s:2},{v:'Fourthline',s:1}];
+new Chart(document.getElementById('channelChart'),{type:'bar',data:{labels:chSorted.map(x=>x.v),datasets:[{data:chSorted.map(x=>x.s),backgroundColor:chSorted.map(x=>x.v==='IDENTT'?'#BA7517':'#378ADD'),borderWidth:0,borderRadius:3}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>` ${ctx.parsed.x}/11`}}},scales:{x:{min:0,max:11,grid:{color:gridC},ticks:{stepSize:1,font:{size:10}},border:{dash:[3,3]}},y:{grid:{display:false},ticks:{font:{size:10},color:ctx=>chSorted[ctx.index].v==='IDENTT'?'#854F0B':textC}}}}});
+
+// growth chart
+const gLabels=['2023','2024','2025','2026','2027','2028','2029','2030'];
+new Chart(document.getElementById('growthChart'),{type:'line',data:{labels:gLabels,datasets:[
+  {label:'Revenue — Organic only',data:[2.9,3.6,4.4,5.5,6.8,8.2,9.8,11.5],borderColor:'#378ADD',backgroundColor:'rgba(55,138,221,0.08)',borderWidth:2,pointRadius:4,pointBackgroundColor:'#378ADD',fill:false,tension:0.35},
+  {label:'Revenue — Organic + Ads',data:[2.9,3.6,4.4,5.5,7.4,9.6,12.5,16.2],borderColor:'#1D9E75',backgroundColor:'rgba(29,158,117,0.08)',borderWidth:2.5,pointRadius:4,pointBackgroundColor:'#1D9E75',fill:false,tension:0.35},
+  {label:'Mktg budget — Organic',data:[0.58,0.72,0.88,1.1,1.36,1.64,1.96,2.3],borderColor:'#378ADD',backgroundColor:'transparent',borderWidth:1.5,borderDash:[5,4],pointRadius:3,pointBackgroundColor:'#378ADD',fill:false,tension:0.35},
+  {label:'Mktg budget — Organic + Ads',data:[0.58,0.72,0.88,1.1,1.48,1.92,2.5,3.24],borderColor:'#1D9E75',backgroundColor:'transparent',borderWidth:1.5,borderDash:[5,4],pointRadius:3,pointBackgroundColor:'#1D9E75',fill:false,tension:0.35},
+]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:true,position:'bottom',labels:{font:{size:10},boxWidth:20,padding:12,color:textC}},tooltip:{callbacks:{label:ctx=>` ${ctx.dataset.label}: €${ctx.parsed.y}M`}}},scales:{x:{grid:{color:gridC},ticks:{font:{size:11},color:textC}},y:{grid:{color:gridC},ticks:{font:{size:11},color:textC,callback:v=>`€${v}M`},title:{display:true,text:'EUR (millions)',font:{size:10},color:textC}}}}});
+
+// reality chart
+new Chart(document.getElementById('realityChart'),{type:'bar',data:{labels:['2025','2026','2027','2028','2029','2030'],datasets:[
+  {type:'line',label:'Revenue — no team investment',data:[4.4,5.5,6.5,8.0,10.0,12.5],borderColor:'#888780',backgroundColor:'transparent',borderWidth:2,borderDash:[5,4],pointRadius:4,pointBackgroundColor:'#888780',fill:false,tension:0.35,yAxisID:'y'},
+  {type:'line',label:'Revenue — with marketing team',data:[4.4,5.3,6.8,8.9,11.5,14.8],borderColor:'#D85A30',backgroundColor:'rgba(216,90,48,0.08)',borderWidth:2.5,pointRadius:4,pointBackgroundColor:'#D85A30',fill:true,tension:0.35,yAxisID:'y'},
+  {type:'bar', label:'Team cost (employer total)',   data:[0,0.12,0.24,0.24,0.24,0.24],backgroundColor:'rgba(186,117,23,0.5)',borderWidth:0,borderRadius:4,yAxisID:'y2'},
+  {type:'bar', label:'Initiatives budget (€6K/mo)', data:[0,0.04,0.07,0.07,0.07,0.07],backgroundColor:'rgba(127,119,221,0.5)',borderWidth:0,borderRadius:4,yAxisID:'y2'},
+]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:true,position:'bottom',labels:{font:{size:10},boxWidth:16,padding:12,color:textC}},tooltip:{callbacks:{label:ctx=>` ${ctx.dataset.label}: €${ctx.parsed.y}M`}}},scales:{x:{grid:{color:gridC},ticks:{font:{size:11},color:textC},stacked:true},y:{grid:{color:gridC},ticks:{font:{size:11},color:textC,callback:v=>`€${v}M`},title:{display:true,text:'Revenue (€M)',font:{size:10},color:textC},position:'left'},y2:{grid:{display:false},ticks:{font:{size:10},color:textC,callback:v=>`€${v}M`},title:{display:true,text:'Investment (€M)',font:{size:10},color:textC},position:'right',stacked:true,max:0.6}}}});
+</script>
+</body>
+</html>
